@@ -3,7 +3,7 @@ from radiome.core import workflow, AttrDict
 from radiome.core.context import Context
 from radiome.core.jobs import NipypeJob
 from radiome.core.resource_pool import ResourcePool, ResourceKey as R
-
+# todo bug fix 1) refer to resource more than once 2. move files
 
 @workflow()
 def create_workflow(config: AttrDict, resource_pool: ResourcePool, context: Context):
@@ -13,8 +13,8 @@ def create_workflow(config: AttrDict, resource_pool: ResourcePool, context: Cont
         inv_flirt_xfm = NipypeJob(interface=fsl.utils.ConvertXFM(invert_xfm=True), reference='inv_linear_reg0_xfm')
 
         linear_reg.in_file = rp[R('brain')]
-        linear_reg.reference = config.anat_template
-        linear_reg.interp = config.interp
+        linear_reg.reference = config.template_brain
+        linear_reg.interp = config.interpolation
 
         inv_flirt_xfm.in_file = linear_reg.out_matrix_file
 

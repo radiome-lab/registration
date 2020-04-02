@@ -10,7 +10,7 @@ inputs:
   linear_only:
     type: boolean
     doc: Use only FLIRT, without FNIRT, for anatomical-to-template registration.
-    default: True
+    default: False
 
   interpolation:
     type: string
@@ -28,17 +28,17 @@ inputs:
   ref_mask:
     type: string
     doc: Configuration file to be used by FSL to set FNIRT parameters.
-    default: /usr/share/fsl/5.0/data/standard/MNI152_T1_{resolution}_brain_mask_dil.nii.gz
+    default: /usr/local/fsl/data/standard/MNI152_T1_{resolution}_brain_mask_dil.nii.gz
 
   template_brain:
     type: string
     doc: Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.
-    default: /usr/share/fsl/5.0/data/standard/MNI152_T1_{resolution}_brain.nii.gz
+    default: /usr/local/fsl/data/standard/MNI152_T1_{resolution}_brain.nii.gz
 
   template_skull:
     type: string
     doc: Template to be used during registration.
-    default: /usr/share/fsl/5.0/data/standard/MNI152_T1_{resolution}.nii.gz
+    default: /usr/local/fsl/data/standard/MNI152_T1_{resolution}.nii.gz
 
   fnirt_config:
     type: string

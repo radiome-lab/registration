@@ -10,6 +10,7 @@ inputs:
   reg_with_skull:
     type: boolean
     doc: Register skull-on anatomical image to a template.
+    default: False
 
   interpolation:
     type: string
@@ -27,12 +28,12 @@ inputs:
   template_brain:
     type: string
     doc: Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.
-    default: /usr/share/fsl/5.0/data/standard/MNI152_T1_{resolution}_brain.nii.gz
+    default: /usr/local/fsl/data/standard/MNI152_T1_{resolution}_brain.nii.gz
 
   template_skull:
     type: string
     doc: Template to be used during registration.
-    default: /usr/share/fsl/5.0/data/standard/MNI152_T1_{resolution}.nii.gz
+    default: /usr/local/fsl/data/standard/MNI152_T1_{resolution}.nii.gz
 
   use_lesion_mask:
     type: boolean

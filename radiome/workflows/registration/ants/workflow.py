@@ -1,11 +1,9 @@
-import os
-import subprocess
+from pathlib import Path
 
 from radiome.core import workflow, AttrDict
 from radiome.core.context import Context
 from radiome.core.jobs import PythonJob
 from radiome.core.resource_pool import ResourcePool, ResourceKey as R
-from radiome.core.utils.s3 import S3Resource
 
 from .lesion import lesion_preproc
 
@@ -13,6 +11,9 @@ from .lesion import lesion_preproc
 def hardcoded_reg(moving_brain, reference_brain, moving_skull,
                   reference_skull, ants_para, fixed_image_mask=None, interp=None):
     # TODO: expand transforms to cover all in ANTs para
+    import os
+    import subprocess
+    from pathlib import Path
     regcmd = ["antsRegistration"]
     for para_index in range(len(ants_para)):
         for para_type in ants_para[para_index]:
@@ -240,11 +241,13 @@ def hardcoded_reg(moving_brain, reference_brain, moving_skull,
 
     return {
         'warp_list': warp_list,
-        'warped_image': warped_image
+        'warped_image': Path(warped_image)
     }
 
 
 def seperate_warps_list(warp_list, selection):
+    from pathlib import Path
+
     selected_warp = None
     for warp in warp_list:
         if selection == 'Warp':
@@ -254,14 +257,14 @@ def seperate_warps_list(warp_list, selection):
             if selection in warp:
                 selected_warp = warp
     return {
-        'selected_warp': selected_warp
+        'selected_warp': Path(selected_warp)
     }
 
 
 @workflow()
 def create_workflow(config: AttrDict, resource_pool: ResourcePool, context: Context):
     for _, rp in resource_pool[['label-reorient_T1w', 'brain']]:
-        calculate_ants_warp = PythonJob(function=hardcoded_reg, reference='calc_ants_warp'),
+        calculate_ants_warp = PythonJob(function=hardcoded_reg, reference='calc_ants_warp')
         # calculate_ants_warp.interface.num_threads = num_threads
         select_forward_initial = PythonJob(function=seperate_warps_list, reference='select_forward_initial')
         select_forward_initial.selection = "Initial"
@@ -286,14 +289,14 @@ def create_workflow(config: AttrDict, resource_pool: ResourcePool, context: Cont
         else:
             calculate_ants_warp.fixed_image_mask = None
 
-        calculate_ants_warp.moving_brain = rp[R('brain')]
+        calculate_ants_warp.moving_brain = rp[R('brain')].content
         calculate_ants_warp.reference_brain = config.template_brain
 
         if config.reg_with_skull:
             calculate_ants_warp.reference_skull = config.template_skull
             calculate_ants_warp.moving_skull = rp[R('T1w', label='reorient')]
         else:
-            calculate_ants_warp.moving_skull = rp[R('brain')]
+            calculate_ants_warp.moving_skull = rp[R('brain')].content
             calculate_ants_warp.reference_skull = config.template_brain
 
         # inter-workflow connections
